@@ -8,6 +8,7 @@ import './App.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const LineChart = require('react-chartjs').Line;
+require('blockadblock');
 
 function peiToIndex(pei) {
   return 'PEI'.indexOf(pei);
@@ -19,12 +20,25 @@ function randomColor(i, opacity) {
 
 class App extends Component {
   state = {
+    adBlockDetected: false,
     currentPEI: 'P',
     personMap: null,
     dates: null,
     startDate: new Date(),
     endDate: new Date(),
   };
+
+  constructor(props) {
+    super(props);
+
+    if (window.blockAdBlock) {
+      window.blockAdBlock.onDetected(() => {
+        this.setState({ adBlockDetected: true });
+      });
+    } else {
+      this.setState({ adBlockDetected : true });
+    }
+  }
 
   handleFiles = files => {
     const reader = new FileReader();
@@ -75,18 +89,26 @@ class App extends Component {
   };
 
   renderChart() {
-    const { dates, personMap, currentPEI, startDate, endDate } = this.state;
+    const { adBlockDetected, dates, personMap, currentPEI, startDate, endDate } = this.state;
 
     if (!personMap) {
       return (
-        <div className="empty-chart">
-          <p style={{ paddingTop: '15px' }}>Upload a PEI file to see it visualized here!</p>
+        <div className={`empty-chart ${adBlockDetected ? 'adblock-detected' : ''}`}>
+          {adBlockDetected ? (
+            <div className='center'>
+              <b>Please disable AdBlock to use PEI Visualizer</b>
+              <p>Ads help keep this site running. Thanks for your support!</p>
+            </div>
+          ) : (
+            <p className='center'>Upload a PEI file to see it visualized here!</p>
+          )}
         </div>
       );
     }
 
     // Filter for start/end date
-    let startIndex = null, endIndex = null;
+    let startIndex = null,
+      endIndex = null;
     for (let i = 0; i < dates.length; i++) {
       const currentDate = new Date(dates[i]);
       if (startIndex === null && currentDate >= startDate) {
@@ -110,9 +132,7 @@ class App extends Component {
         pointStrokeColor: '#fff',
         pointHighlightFill: randomColor(i, 1),
         pointHighlightStroke: '#fff',
-        data: personMap[person]
-          .filter(dateFilter)
-          .map(a => a[peiToIndex(currentPEI)]),
+        data: personMap[person].filter(dateFilter).map(a => a[peiToIndex(currentPEI)]),
       });
     });
     const chartData = {
@@ -124,13 +144,13 @@ class App extends Component {
     };
 
     const width = window.innerWidth < 1000 ? 600 : 800;
-    const height = width * 3 / 4;
+    const height = (width * 3) / 4;
 
     return <LineChart data={chartData} options={chartOptions} width={width} height={height} />;
   }
 
   render() {
-    const { currentPEI, startDate, endDate } = this.state;
+    const { adBlockDetected, currentPEI, startDate, endDate } = this.state;
 
     return (
       <div className="App">
@@ -138,11 +158,17 @@ class App extends Component {
         <Grid>
           <Col lg={2} md={3} sm={3} xs={4}>
             <div className="file-upload">
-              <p>Upload a CSV file with 5 columns: <b>Date, Name, P, E, I.</b></p>
+              <p>
+                Upload a CSV file with 5 columns: <b>Date, Name, P, E, I.</b>
+              </p>
               <p>The file should be sorted in increasing order by Date.</p>
-              <p><a target='_blank' href='/example.csv'>Download Example</a></p>
-              <ReactFileReader fileTypes={['.csv']} handleFiles={this.handleFiles}>
-                <button>Upload CSV</button>
+              <p>
+                <a target="_blank" href="/example.csv">
+                  Download Example
+                </a>
+              </p>
+              <ReactFileReader fileTypes={['.csv']} handleFiles={this.handleFiles} disabled={adBlockDetected}>
+                <button className={adBlockDetected ? 'disabled' : ''}>Upload CSV</button>
               </ReactFileReader>
             </div>
             <Form>
@@ -170,10 +196,18 @@ class App extends Component {
               endDate={endDate}
               onChange={this.onEndDateChange}
             />
-            <div className='gpt-ad' id='div-gpt-ad-1548576881046-0' style={{ height: '600px', width: '160px' }} />
+            <div
+              className="gpt-ad"
+              id="div-gpt-ad-1548576881046-0"
+              style={{ height: '600px', width: '160px' }}
+            />
           </Col>
           <Col lg={10} md={9} sm={9} xs={8}>
-            <div className='gpt-ad' id='div-gpt-ad-1548574061321-0' style={{ height: '90px', width: '728px' }} />
+            <div
+              className="gpt-ad"
+              id="div-gpt-ad-1548574061321-0"
+              style={{ height: '90px', width: '728px' }}
+            />
             {this.renderChart()}
           </Col>
         </Grid>
