@@ -80,7 +80,7 @@ class App extends Component {
     if (!personMap) {
       return (
         <div className="empty-chart">
-          <p>Upload a PEI file to see it visualized here!</p>
+          <p style={{ paddingTop: '15px' }}>Upload a PEI file to see it visualized here!</p>
         </div>
       );
     }
