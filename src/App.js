@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactFileReader from 'react-file-reader';
 import Form from 'react-bootstrap/lib/Form';
-import { Checkbox, Col, Grid } from 'react-bootstrap';
+import { Radio, Col, Grid } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 
 import './App.css';
@@ -61,7 +61,7 @@ class App extends Component {
     reader.readAsText(files[0]);
   };
 
-  onCheckboxChange = pei => {
+  onPEIChange = pei => {
     this.setState({ currentPEI: pei });
   };
 
@@ -104,12 +104,12 @@ class App extends Component {
     Object.keys(personMap).forEach((person, i) => {
       datasets.push({
         label: person,
-        strokeColor: randomColor(i, 1),
-        fillColor: randomColor(i, 0.1),
-        pointColor: randomColor(i, 1),
+        strokeColor: randomColor(i, 0.5),
+        fillColor: randomColor(i, 0.05),
+        pointColor: randomColor(i, 0.8),
         pointStrokeColor: '#fff',
-        pointHighlightFill: '#fff',
-        pointHighlightStroke: 'rgba(220,220,220,1)',
+        pointHighlightFill: randomColor(i, 1),
+        pointHighlightStroke: '#fff',
         data: personMap[person]
           .filter(dateFilter)
           .map(a => a[peiToIndex(currentPEI)]),
@@ -141,13 +141,13 @@ class App extends Component {
             </div>
             <Form>
               {['P', 'E', 'I'].map(pei => (
-                <Checkbox
+                <Radio
                   key={pei}
                   checked={pei === currentPEI}
-                  onChange={this.onCheckboxChange.bind(this, pei)}
+                  onChange={this.onPEIChange.bind(this, pei)}
                 >
                   {pei}
-                </Checkbox>
+                </Radio>
               ))}
             </Form>
             <DatePicker
