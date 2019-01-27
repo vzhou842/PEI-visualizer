@@ -123,7 +123,10 @@ class App extends Component {
       datasetFill: true,
     };
 
-    return <LineChart data={chartData} options={chartOptions} width="800" height="600" />;
+    const width = window.innerWidth < 1000 ? 600 : 800;
+    const height = width * 3 / 4;
+
+    return <LineChart data={chartData} options={chartOptions} width={width} height={height} />;
   }
 
   render() {
@@ -133,7 +136,7 @@ class App extends Component {
       <div className="App">
         <h1>PEI Visualizer</h1>
         <Grid>
-          <Col md={2}>
+          <Col lg={2} md={3} sm={3} xs={4}>
             <div className="file-upload">
               <ReactFileReader fileTypes={['.csv']} handleFiles={this.handleFiles}>
                 <button>Upload</button>
@@ -164,8 +167,12 @@ class App extends Component {
               endDate={endDate}
               onChange={this.onEndDateChange}
             />
+            <div className='gpt-ad' id='div-gpt-ad-1548576881046-0' style={{ height: '600px', width: '160px' }} />
           </Col>
-          <Col md={10}>{this.renderChart()}</Col>
+          <Col lg={10} md={9} sm={9} xs={8}>
+            <div className='gpt-ad' id='div-gpt-ad-1548574061321-0' style={{ height: '90px', width: '728px' }} />
+            {this.renderChart()}
+          </Col>
         </Grid>
       </div>
     );
