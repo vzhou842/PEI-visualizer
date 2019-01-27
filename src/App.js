@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import './App.css';
 import ReactFileReader from 'react-file-reader';
 import Form from 'react-bootstrap/lib/Form';
 import { Checkbox, Col, Grid } from 'react-bootstrap';
+import DatePicker from 'react-datepicker';
+
+import './App.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const LineChart = require('react-chartjs').Line;
 
@@ -15,7 +18,13 @@ function randomColor(i, opacity) {
 }
 
 class App extends Component {
-  state = { currentPEI: 'P', personMap: null, dates: null };
+  state = {
+    currentPEI: 'P',
+    personMap: null,
+    dates: null,
+    startDate: new Date(),
+    endDate: new Date(),
+  };
 
   handleFiles = files => {
     const reader = new FileReader();
@@ -23,22 +32,31 @@ class App extends Component {
       const lines = reader.result.split('\n').slice(1); // ignore header
       const personMap = {};
       const dates = [];
-      lines.forEach(line => {
+      let startDate, endDate;
+      lines.forEach((line, i) => {
         const elements = line.split(',');
         if (elements.length < 5) {
           return;
         }
         const date = elements[0];
         const person = elements[1];
+
+        // Update start/end dates
+        if (!startDate) {
+          startDate = new Date(date);
+        }
+        endDate = new Date(date);
+
         if (!dates.includes(date)) {
           dates.push(date);
         }
         if (!personMap[person]) {
           personMap[person] = [];
         }
+
         personMap[person].push(elements.slice(2));
       });
-      this.setState({ dates, personMap });
+      this.setState({ dates, personMap, startDate, endDate });
     };
     reader.readAsText(files[0]);
   };
@@ -47,12 +65,40 @@ class App extends Component {
     this.setState({ currentPEI: pei });
   };
 
+  onStartDateChange = startDate => {
+    this.setState({ startDate });
+    console.log(startDate);
+  };
+
+  onEndDateChange = endDate => {
+    this.setState({ endDate });
+  };
+
   renderChart() {
-    const { dates, personMap, currentPEI } = this.state;
+    const { dates, personMap, currentPEI, startDate, endDate } = this.state;
 
     if (!personMap) {
-      return null;
+      return (
+        <div className="empty-chart">
+          <p>Upload a PEI file to see it visualized here!</p>
+        </div>
+      );
     }
+
+    // Filter for start/end date
+    let startIndex = null, endIndex = null;
+    for (let i = 0; i < dates.length; i++) {
+      const currentDate = new Date(dates[i]);
+      if (startIndex === null && currentDate >= startDate) {
+        startIndex = i;
+      }
+      if (startIndex !== null && currentDate > endDate) {
+        break;
+      } else {
+        endIndex = i;
+      }
+    }
+    const dateFilter = (e, i) => i >= startIndex && i <= endIndex;
 
     const datasets = [];
     Object.keys(personMap).forEach((person, i) => {
@@ -61,27 +107,27 @@ class App extends Component {
         strokeColor: randomColor(i, 1),
         fillColor: randomColor(i, 0.1),
         pointColor: randomColor(i, 1),
-        pointStrokeColor: "#fff",
-        pointHighlightFill: "#fff",
-        pointHighlightStroke: "rgba(220,220,220,1)",
-        data: personMap[person].map(a => a[peiToIndex(currentPEI)]),
+        pointStrokeColor: '#fff',
+        pointHighlightFill: '#fff',
+        pointHighlightStroke: 'rgba(220,220,220,1)',
+        data: personMap[person]
+          .filter(dateFilter)
+          .map(a => a[peiToIndex(currentPEI)]),
       });
     });
     const chartData = {
-      labels: dates,
+      labels: dates.filter(dateFilter),
       datasets,
     };
     const chartOptions = {
       datasetFill: true,
     };
 
-    return (
-      <LineChart data={chartData} options={chartOptions} width="800" height="600" />
-    );
+    return <LineChart data={chartData} options={chartOptions} width="800" height="600" />;
   }
 
   render() {
-    const { currentPEI } = this.state;
+    const { currentPEI, startDate, endDate } = this.state;
 
     return (
       <div className="App">
@@ -94,18 +140,32 @@ class App extends Component {
               </ReactFileReader>
             </div>
             <Form>
-              {
-                ['P', 'E', 'I'].map(pei => (
-                  <Checkbox key={pei} checked={pei === currentPEI} onChange={this.onCheckboxChange.bind(this, pei)}>
-                    {pei}
-                  </Checkbox>
-                ))
-              }
+              {['P', 'E', 'I'].map(pei => (
+                <Checkbox
+                  key={pei}
+                  checked={pei === currentPEI}
+                  onChange={this.onCheckboxChange.bind(this, pei)}
+                >
+                  {pei}
+                </Checkbox>
+              ))}
             </Form>
+            <DatePicker
+              selected={startDate}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              onChange={this.onStartDateChange}
+            />
+            <DatePicker
+              selected={endDate}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              onChange={this.onEndDateChange}
+            />
           </Col>
-          <Col md={10}>
-            {this.renderChart()}
-          </Col>
+          <Col md={10}>{this.renderChart()}</Col>
         </Grid>
       </div>
     );
