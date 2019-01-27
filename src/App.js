@@ -138,8 +138,11 @@ class App extends Component {
         <Grid>
           <Col lg={2} md={3} sm={3} xs={4}>
             <div className="file-upload">
+              <p>Upload a CSV file with 5 columns: <b>Date, Name, P, E, I.</b></p>
+              <p>The file should be sorted in increasing order by Date.</p>
+              <p><a target='_blank' href='/example.csv'>Download Example CSV</a></p>
               <ReactFileReader fileTypes={['.csv']} handleFiles={this.handleFiles}>
-                <button>Upload</button>
+                <button>Upload CSV</button>
               </ReactFileReader>
             </div>
             <Form>
