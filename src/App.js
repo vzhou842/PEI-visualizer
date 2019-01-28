@@ -203,6 +203,7 @@ class App extends Component {
               startDate={startDate}
               endDate={endDate}
               onChange={this.onStartDateChange}
+              placeholderText="Start Date"
             />
             <DatePicker
               selected={endDate}
@@ -210,6 +211,7 @@ class App extends Component {
               startDate={startDate}
               endDate={endDate}
               onChange={this.onEndDateChange}
+              placeholderText="End Date"
             />
             <Form>
               {personMap &&
