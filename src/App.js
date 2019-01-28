@@ -50,8 +50,11 @@ class App extends Component {
     reader.onload = e => {
       const lines = reader.result.split('\n').slice(1); // ignore header
       const personMap = {};
+      const personLastDates = {};
       const dates = [];
       let startDate, endDate;
+
+      // First pass - personMap maps person -> date -> [p, e, i]
       lines.forEach((line, i) => {
         const elements = line.split(',');
         const date = elements[0];
@@ -70,11 +73,22 @@ class App extends Component {
           dates.push(date);
         }
         if (!personMap[person]) {
-          personMap[person] = [];
+          personMap[person] = {};
         }
 
-        personMap[person].push(elements.slice(2));
+        personMap[person][date] = elements.slice(2);
       });
+
+      // Second pass - modify personMap to an array based on dates
+      for (const person in personMap) {
+        const personArr = [];
+        dates.forEach(date => {
+          personArr.push(personMap[person][date]);
+        });
+        personMap[person] = personArr;
+      }
+
+      // Update state.
       this.setState({ dates, personMap, startDate, endDate });
     };
     reader.readAsText(files[0]);
@@ -159,7 +173,7 @@ class App extends Component {
         pointStrokeColor: '#fff',
         pointHighlightFill: randomColor(i, 1),
         pointHighlightStroke: '#fff',
-        data: personMap[person].filter(dateFilter).map(a => a[peiToIndex(currentPEI)]),
+        data: personMap[person].filter(dateFilter).map(a => a ? a[peiToIndex(currentPEI)] : null),
       });
     });
     const chartData = {
