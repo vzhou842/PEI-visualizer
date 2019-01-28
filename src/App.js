@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactFileReader from 'react-file-reader';
 import Form from 'react-bootstrap/lib/Form';
-import { Radio, Col, Grid } from 'react-bootstrap';
+import { Col, Grid, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 
 import './App.css';
@@ -12,6 +12,10 @@ require('blockadblock');
 
 function peiToIndex(pei) {
   return 'PEI'.indexOf(pei);
+}
+
+function indexToPEI(index) {
+  return 'PEI'[index];
 }
 
 function randomColor(i, opacity) {
@@ -75,13 +79,12 @@ class App extends Component {
     reader.readAsText(files[0]);
   };
 
-  onPEIChange = pei => {
-    this.setState({ currentPEI: pei });
+  onPEIChange = index => {
+    this.setState({ currentPEI: indexToPEI(index) });
   };
 
   onStartDateChange = startDate => {
     this.setState({ startDate });
-    console.log(startDate);
   };
 
   onEndDateChange = endDate => {
@@ -172,15 +175,11 @@ class App extends Component {
               </ReactFileReader>
             </div>
             <Form>
-              {['P', 'E', 'I'].map(pei => (
-                <Radio
-                  key={pei}
-                  checked={pei === currentPEI}
-                  onChange={this.onPEIChange.bind(this, pei)}
-                >
-                  {pei}
-                </Radio>
-              ))}
+              <ToggleButtonGroup type="radio" name="PEI" value={peiToIndex(currentPEI)} onChange={this.onPEIChange}>
+                {['P', 'E', 'I'].map(pei => (
+                  <ToggleButton key={pei} value={peiToIndex(pei)}>{pei}</ToggleButton>
+                ))}
+              </ToggleButtonGroup>
             </Form>
             <DatePicker
               selected={startDate}
