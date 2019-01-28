@@ -103,7 +103,20 @@ class App extends Component {
               <p>Ads help keep this site running. Thanks for your support!</p>
             </div>
           ) : (
-            <p className='center'>Upload a PEI file to see it visualized here!</p>
+            <div className="center">
+              <p>
+                Upload a CSV file with 5 columns: <b>Date, Name, P, E, I.</b>
+              </p>
+              <p>The file should be sorted in increasing order by Date.</p>
+              <p>
+                <a target="_blank" href="/example.csv">
+                  Download Example CSV
+                </a>
+              </p>
+              <ReactFileReader fileTypes={['.csv']} handleFiles={this.handleFiles} disabled={adBlockDetected}>
+                <button>Upload CSV</button>
+              </ReactFileReader>
+            </div>
           )}
         </div>
       );
@@ -160,20 +173,6 @@ class App extends Component {
         <h1>PEI Visualizer</h1>
         <Grid>
           <Col lg={2} md={3} sm={3} xs={4}>
-            <div className="file-upload">
-              <p>
-                Upload a CSV file with 5 columns: <b>Date, Name, P, E, I.</b>
-              </p>
-              <p>The file should be sorted in increasing order by Date.</p>
-              <p>
-                <a target="_blank" href="/example.csv">
-                  Download Example
-                </a>
-              </p>
-              <ReactFileReader fileTypes={['.csv']} handleFiles={this.handleFiles} disabled={adBlockDetected}>
-                <button className={adBlockDetected ? 'disabled' : ''}>Upload CSV</button>
-              </ReactFileReader>
-            </div>
             <Form>
               <ToggleButtonGroup type="radio" name="PEI" value={peiToIndex(currentPEI)} onChange={this.onPEIChange}>
                 {['P', 'E', 'I'].map(pei => (
