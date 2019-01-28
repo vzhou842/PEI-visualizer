@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactFileReader from 'react-file-reader';
 import Form from 'react-bootstrap/lib/Form';
-import { Col, Grid, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
+import { Checkbox, Col, Grid, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 
 import './App.css';
@@ -26,6 +26,7 @@ class App extends Component {
   state = {
     adBlockDetected: false,
     currentPEI: 'P',
+    disabledPeople: {},
     personMap: null,
     dates: null,
     startDate: new Date(),
@@ -40,7 +41,7 @@ class App extends Component {
         this.setState({ adBlockDetected: true });
       });
     } else {
-      this.setState({ adBlockDetected : true });
+      this.setState({ adBlockDetected: true });
     }
   }
 
@@ -91,14 +92,19 @@ class App extends Component {
     this.setState({ endDate });
   };
 
+  onTogglePerson = person => {
+    const { disabledPeople } = this.state;
+    this.setState({ disabledPeople: { ...disabledPeople, [person]: !disabledPeople[person] }});
+  };
+
   renderChart() {
-    const { adBlockDetected, dates, personMap, currentPEI, startDate, endDate } = this.state;
+    const { adBlockDetected, dates, disabledPeople, personMap, currentPEI, startDate, endDate } = this.state;
 
     if (!personMap) {
       return (
         <div className={`empty-chart ${adBlockDetected ? 'adblock-detected' : ''}`}>
           {adBlockDetected ? (
-            <div className='center'>
+            <div className="center">
               <b>Please disable AdBlock to use PEI Visualizer</b>
               <p>Ads help keep this site running. Thanks for your support!</p>
             </div>
@@ -113,7 +119,11 @@ class App extends Component {
                   Download Example CSV
                 </a>
               </p>
-              <ReactFileReader fileTypes={['.csv']} handleFiles={this.handleFiles} disabled={adBlockDetected}>
+              <ReactFileReader
+                fileTypes={['.csv']}
+                handleFiles={this.handleFiles}
+                disabled={adBlockDetected}
+              >
                 <button>Upload CSV</button>
               </ReactFileReader>
             </div>
@@ -138,8 +148,9 @@ class App extends Component {
     }
     const dateFilter = (e, i) => i >= startIndex && i <= endIndex;
 
+    // Build the chart data
     const datasets = [];
-    Object.keys(personMap).forEach((person, i) => {
+    Object.keys(personMap).filter(person => !disabledPeople[person]).forEach((person, i) => {
       datasets.push({
         label: person,
         strokeColor: randomColor(i, 0.5),
@@ -162,24 +173,30 @@ class App extends Component {
     const width = window.innerWidth < 1000 ? 600 : 800;
     const height = (width * 3) / 4;
 
-    return <LineChart data={chartData} options={chartOptions} width={width} height={height} />;
+    return <LineChart data={chartData} redraw options={chartOptions} width={width} height={height} />;
   }
 
   render() {
-    const { adBlockDetected, currentPEI, startDate, endDate } = this.state;
+    const { currentPEI, disabledPeople, personMap, startDate, endDate } = this.state;
 
     return (
       <div className="App">
         <h1>PEI Visualizer</h1>
         <Grid>
           <Col lg={2} md={3} sm={3} xs={4}>
-            <Form>
-              <ToggleButtonGroup type="radio" name="PEI" value={peiToIndex(currentPEI)} onChange={this.onPEIChange}>
-                {['P', 'E', 'I'].map(pei => (
-                  <ToggleButton key={pei} value={peiToIndex(pei)}>{pei}</ToggleButton>
-                ))}
-              </ToggleButtonGroup>
-            </Form>
+            <ToggleButtonGroup
+              type="radio"
+              name="PEI"
+              className="PEI-button-group"
+              value={peiToIndex(currentPEI)}
+              onChange={this.onPEIChange}
+            >
+              {['P', 'E', 'I'].map(pei => (
+                <ToggleButton key={pei} value={peiToIndex(pei)}>
+                  {pei}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
             <DatePicker
               selected={startDate}
               selectsStart
@@ -194,6 +211,18 @@ class App extends Component {
               endDate={endDate}
               onChange={this.onEndDateChange}
             />
+            <Form>
+              {personMap &&
+                Object.keys(personMap).map(person => (
+                  <Checkbox
+                    key={person}
+                    checked={!disabledPeople[person]}
+                    onChange={this.onTogglePerson.bind(this, person)}
+                  >
+                    {person}
+                  </Checkbox>
+                ))}
+            </Form>
             <div
               className="gpt-ad"
               id="div-gpt-ad-1548576881046-0"
