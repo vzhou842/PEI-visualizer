@@ -1,7 +1,6 @@
 {
-  "name": "vic-pei-visualizer",
+  "name": "PEI-visualizer",
   "version": "0.1.0",
-  "private": true,
   "dependencies": {
     "blockadblock": "^3.2.1",
     "chart.js": "^1.1.1",
