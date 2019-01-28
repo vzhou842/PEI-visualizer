@@ -197,7 +197,7 @@ class App extends Component {
       <div className="App">
         <div className="header">
           <h1>PEI Visualizer</h1>
-          <p>A <b>P</b>hsyical, <b>E</b>motional, and <b>I</b>ntellectual health visualizer.</p>
+          <p>A <b>P</b>hysical, <b>E</b>motional, and <b>I</b>ntellectual health visualizer.</p>
         </div>
         <Grid>
           <Col lg={2} md={3} sm={3} xs={4}>
