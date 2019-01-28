@@ -181,7 +181,10 @@ class App extends Component {
 
     return (
       <div className="App">
-        <h1>PEI Visualizer</h1>
+        <div className="header">
+          <h1>PEI Visualizer</h1>
+          <p>A <b>P</b>hsyical, <b>E</b>motional, and <b>I</b>ntellectual health visualizer.</p>
+        </div>
         <Grid>
           <Col lg={2} md={3} sm={3} xs={4}>
             <ToggleButtonGroup

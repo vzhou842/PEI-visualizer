@@ -2,6 +2,10 @@
   text-align: center;
 }
 
+.header {
+  margin-bottom: 20px;
+}
+
 .center {
   position: absolute;
   top: 50%;
@@ -52,10 +56,6 @@
 
 .checkbox label:hover {
   color: mediumblue;
-}
-
-h1 {
-  margin: 20px 0 30px 0;
 }
 
 input {
