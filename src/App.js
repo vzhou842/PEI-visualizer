@@ -50,7 +50,6 @@ class App extends Component {
     reader.onload = e => {
       const lines = reader.result.split('\n').slice(1); // ignore header
       const personMap = {};
-      const personLastDates = {};
       const dates = [];
       let startDate, endDate;
 
