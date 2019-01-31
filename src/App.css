@@ -58,6 +58,10 @@
   color: mediumblue;
 }
 
+.faq {
+  margin-top: 75px;
+}
+
 input {
   border: none;
   border-bottom: 1px solid lightgray;

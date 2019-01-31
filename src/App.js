@@ -256,6 +256,17 @@ class App extends Component {
             {this.renderChart()}
           </Col>
         </Grid>
+        <Grid className="faq">
+          <h2>FAQ</h2>
+          <h3>What is Physical Health?</h3>
+          <p>Physical Health is the ability to maintain a healthy quality of life that allows us to get through our daily activities without undue fatigue or physical stress. The ability to recognize that our behaviors have a significant impact on our wellness and adopting healthful habits while avoiding destructive habits will lead to optimal Physical Health.</p>
+          <h3>What is Emotional Health?</h3>
+          <p>Emotional Health is the ability to understand ourselves and cope with the challenges life can bring. The ability to acknowledge and share feelings of anger, fear, sadness, stress, hope, love, joy and happiness in a productive manner contributes to our Emotional Health.</p>
+          <h3>What is Intellectual Health?</h3>
+          <p>Intellectual Health is the ability to open our minds to new ideas and experiences that can be applied to personal decisions, group interaction and community betterment. The desire to learn new concepts, improve skills and seek challenges in pursuit of lifelong learning contributes to our Intellectual Health.</p>
+          <h3>Where can I learn more?</h3>
+          <p>Read more about the <a target="_blank" href="https://wellness.ucr.edu/seven_dimensions.html">Seven Dimensions of Wellness</a> from the University of California, Riverside.</p>
+        </Grid>
       </div>
     );
   }
