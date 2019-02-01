@@ -4,6 +4,8 @@ import Form from 'react-bootstrap/lib/Form';
 import { Checkbox, Col, Grid, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 
+import { POST } from './HTTP';
+
 import './App.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -89,6 +91,12 @@ class App extends Component {
 
       // Update state.
       this.setState({ dates, personMap, startDate, endDate });
+
+      // Request the server for a link
+      POST('/link/new', { csv: reader.result }).then(response => {
+        const url = response;
+        window.history.replaceState(null, null, url);
+      }).catch(console.error);
     };
     reader.readAsText(files[0]);
   };
