@@ -77,7 +77,14 @@ class App extends Component {
           personMap[person] = {};
         }
 
-        personMap[person][date] = elements.slice(2);
+        // Make sure PEI are valid numbers
+        const pei = elements.slice(2);
+        for (let i = 0; i < pei.length; i++) {
+          if (Number.isNaN(parseFloat(pei[i]))) {
+            return;
+          }
+        }
+        personMap[person][date] = pei;
       });
 
       // Second pass - modify personMap to an array based on dates
@@ -121,7 +128,8 @@ class App extends Component {
   renderChart() {
     const { adBlockDetected, dates, disabledPeople, personMap, currentPEI, startDate, endDate } = this.state;
 
-    if (!personMap) {
+    const emptyPersonMap = personMap && !Object.keys(personMap).length;
+    if (!personMap || emptyPersonMap) {
       return (
         <div className={`empty-chart ${adBlockDetected ? 'adblock-detected' : ''}`}>
           {adBlockDetected ? (
@@ -131,6 +139,7 @@ class App extends Component {
             </div>
           ) : (
             <div className="center">
+              {emptyPersonMap && <b>The file you uploaded contained no valid data.</b>}
               <p>
                 Upload a CSV file with 5 columns: <b>Date, Name, P, E, I.</b>
               </p>
