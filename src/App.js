@@ -5,6 +5,7 @@ import { Checkbox, Col, Grid, ToggleButtonGroup, ToggleButton } from 'react-boot
 import DatePicker from 'react-datepicker';
 
 import { GET, POST } from './HTTP';
+import ShareLink from './ShareLink';
 
 import './App.css';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -29,6 +30,7 @@ class App extends Component {
     adBlockDetected: false,
     currentPEI: 'P',
     disabledPeople: {},
+    link: null,
     linkDataError: false,
     personMap: null,
     dates: null,
@@ -49,10 +51,11 @@ class App extends Component {
     }
 
     // Download link data if needed
-    if (window.location.pathname.includes('/link/')) {
-      GET(`${window.location.pathname}/data`)
+    const { pathname } = window.location;
+    if (pathname.includes('/link/')) {
+      GET(`${pathname}/data`)
         .then(data => {
-          this.setState(JSON.parse(data));
+          this.setState({ ...JSON.parse(data), link: pathname });
         })
         .catch(err => {
           console.error(err);
@@ -116,9 +119,9 @@ class App extends Component {
 
       // Request the server for a link
       POST('/link/new', { data: { dates, personMap } })
-        .then(response => {
-          const url = response;
-          window.history.replaceState(null, null, url);
+        .then(link => {
+          window.history.replaceState(null, null, link);
+          this.setState({ link });
         })
         .catch(console.error);
     };
@@ -251,7 +254,7 @@ class App extends Component {
   }
 
   render() {
-    const { currentPEI, disabledPeople, personMap, startDate, endDate } = this.state;
+    const { currentPEI, disabledPeople, link, personMap, startDate, endDate } = this.state;
 
     return (
       <div className="App">
@@ -263,6 +266,7 @@ class App extends Component {
         </div>
         <Grid>
           <Col lg={2} md={3} sm={3} xs={4}>
+            {link && <ShareLink />}
             <ToggleButtonGroup
               type="radio"
               name="PEI"
