@@ -25,13 +25,17 @@ function randomColor(i, opacity) {
   return `rgba(${(i * 85 + 117) % 256}, ${(i * 67 + 5) % 256}, ${(i * 219) % 256}, ${opacity})`;
 }
 
+const LINK_DATA_NONE = 0;
+const LINK_DATA_LOADING = 1;
+const LINK_DATA_ERROR = 2;
+
 class App extends Component {
   state = {
     adBlockDetected: false,
     currentPEI: 'P',
     disabledPeople: {},
     link: null,
-    linkDataError: false,
+    linkDataState: LINK_DATA_NONE,
     personMap: null,
     dates: null,
     startDate: new Date(),
@@ -47,19 +51,20 @@ class App extends Component {
         this.setState({ adBlockDetected: true });
       });
     } else {
-      this.setState({ adBlockDetected: true });
+      this.state.adBlockDetected = true;
     }
 
     // Download link data if needed
     const { pathname } = window.location;
     if (pathname.includes('/link/')) {
+      this.state.linkDataState = LINK_DATA_LOADING;
       GET(`${pathname}/data`)
         .then(data => {
-          this.setState({ ...JSON.parse(data), link: pathname });
+          this.setState({ ...JSON.parse(data), link: pathname, linkDataState: LINK_DATA_NONE });
         })
         .catch(err => {
           console.error(err);
-          this.setState({ linkDataError: true });
+          this.setState({ linkDataState: LINK_DATA_ERROR });
         });
     }
   }
@@ -150,21 +155,27 @@ class App extends Component {
       adBlockDetected,
       dates,
       disabledPeople,
-      linkDataError,
+      linkDataState,
       personMap,
       currentPEI,
       startDate,
       endDate,
     } = this.state;
 
-    if (linkDataError) {
+    if (linkDataState !== LINK_DATA_NONE) {
       return (
         <div className="empty-chart">
-          <div className="center">
-            <h4>Link Not Found</h4>
-            <p>We couldn't find any data associated with this link - it may be expired.</p>
-            <a href="/">Upload New CSV</a>
-          </div>
+          {linkDataState === LINK_DATA_ERROR ? (
+            <div className="center">
+              <h4>Link Not Found</h4>
+              <p>We couldn't find any data associated with this link - it may be expired.</p>
+              <a href="/">Upload New CSV</a>
+            </div>
+          ) : (
+            <div className="center">
+              <h4>Loading Data...</h4>
+            </div>
+          )}
         </div>
       );
     }

@@ -89,6 +89,7 @@ a:hover {
 }
 
 button {
+  white-space: nowrap;
   border: none;
   outline: none;
   padding: 8px 40px;
