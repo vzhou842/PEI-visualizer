@@ -22,25 +22,37 @@ app.get('/link/:id', (req, res) => {
 
 app.get('/link/:id/data', (req, res, next) => {
   const { id } = req.params;
-  redis.getLink(id).then(data => {
-    if (data) {
-      res.status(200).send(data);
-    } else {
-      res.status(404).end();
-    }
-  }).catch(next);
+  redis
+    .getLink(id)
+    .then(data => {
+      if (data) {
+        res.status(200).send(data);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch(next);
 });
 
 app.post('/link/new', (req, res, next) => {
   const { data } = req.body;
-  if (!data) {
+  if (
+    !data ||
+    !data.dates ||
+    !data.personMap ||
+    !data.dates.length ||
+    !Object.keys(data.personMap).length
+  ) {
     return res.status(400).end();
   }
-  // TODO: enforce max / min data size
+
   const url = shortid();
-  redis.saveLink(url, data).then(() => {
-    res.status(200).send(`/link/${url}`);
-  }).catch(next);
+  redis
+    .saveLink(url, { dates: data.dates, personMap: data.personMap })
+    .then(() => {
+      res.status(200).send(`/link/${url}`);
+    })
+    .catch(next);
 });
 
 // Error Handler
