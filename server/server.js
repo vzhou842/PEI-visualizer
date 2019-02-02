@@ -18,14 +18,17 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(BUILD_DIR, 'index.html'));
 });
 
-app.get('/link/:id', (req, res, next) => {
+app.get('/link/:id', (req, res) => {
+  res.sendFile(path.join(BUILD_DIR, 'index.html'));
+});
+
+app.get('/link/:id/data', (req, res, next) => {
   const { id } = req.params;
   redis.getLink(id).then(data => {
-    if (!data) {
-      res.sendFile(path.join(BUILD_DIR, 'link404.html'));
+    if (data) {
+      res.status(200).send(data);
     } else {
-      // TODO: render result with stored data
-      res.sendFile(path.join(BUILD_DIR, 'index.html'));
+      res.status(404).end();
     }
   }).catch(next);
 });

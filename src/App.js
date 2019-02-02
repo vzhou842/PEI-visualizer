@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/lib/Form';
 import { Checkbox, Col, Grid, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 
-import { POST } from './HTTP';
+import { GET, POST } from './HTTP';
 
 import './App.css';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -29,6 +29,7 @@ class App extends Component {
     adBlockDetected: false,
     currentPEI: 'P',
     disabledPeople: {},
+    linkDataError: false,
     personMap: null,
     dates: null,
     startDate: new Date(),
@@ -38,12 +39,25 @@ class App extends Component {
   constructor(props) {
     super(props);
 
+    // Check for AdBlock
     if (window.blockAdBlock) {
       window.blockAdBlock.onDetected(() => {
         this.setState({ adBlockDetected: true });
       });
     } else {
       this.setState({ adBlockDetected: true });
+    }
+
+    // Download link data if needed
+    if (window.location.pathname.includes('/link/')) {
+      GET(`${window.location.pathname}/data`)
+        .then(data => {
+          this.setState(JSON.parse(data));
+        })
+        .catch(err => {
+          console.error(err);
+          this.setState({ linkDataError: true });
+        });
     }
   }
 
@@ -101,10 +115,12 @@ class App extends Component {
       this.setState({ dates, personMap, startDate, endDate });
 
       // Request the server for a link
-      POST('/link/new', { data: { dates, personMap } }).then(response => {
-        const url = response;
-        window.history.replaceState(null, null, url);
-      }).catch(console.error);
+      POST('/link/new', { data: { dates, personMap } })
+        .then(response => {
+          const url = response;
+          window.history.replaceState(null, null, url);
+        })
+        .catch(console.error);
     };
     reader.readAsText(files[0]);
   };
@@ -123,11 +139,32 @@ class App extends Component {
 
   onTogglePerson = person => {
     const { disabledPeople } = this.state;
-    this.setState({ disabledPeople: { ...disabledPeople, [person]: !disabledPeople[person] }});
+    this.setState({ disabledPeople: { ...disabledPeople, [person]: !disabledPeople[person] } });
   };
 
   renderChart() {
-    const { adBlockDetected, dates, disabledPeople, personMap, currentPEI, startDate, endDate } = this.state;
+    const {
+      adBlockDetected,
+      dates,
+      disabledPeople,
+      linkDataError,
+      personMap,
+      currentPEI,
+      startDate,
+      endDate,
+    } = this.state;
+
+    if (linkDataError) {
+      return (
+        <div className="empty-chart">
+          <div className="center">
+            <h4>Link Not Found</h4>
+            <p>We couldn't find any data associated with this link - it may be expired.</p>
+            <a href="/">Upload New CSV</a>
+          </div>
+        </div>
+      );
+    }
 
     const emptyPersonMap = personMap && !Object.keys(personMap).length;
     if (!personMap || emptyPersonMap) {
@@ -181,18 +218,22 @@ class App extends Component {
 
     // Build the chart data
     const datasets = [];
-    Object.keys(personMap).filter(person => !disabledPeople[person]).forEach((person, i) => {
-      datasets.push({
-        label: person,
-        strokeColor: randomColor(i, 0.5),
-        fillColor: randomColor(i, 0.05),
-        pointColor: randomColor(i, 0.8),
-        pointStrokeColor: '#fff',
-        pointHighlightFill: randomColor(i, 1),
-        pointHighlightStroke: '#fff',
-        data: personMap[person].filter(dateFilter).map(a => a ? a[peiToIndex(currentPEI)] : null),
+    Object.keys(personMap)
+      .filter(person => !disabledPeople[person])
+      .forEach((person, i) => {
+        datasets.push({
+          label: person,
+          strokeColor: randomColor(i, 0.5),
+          fillColor: randomColor(i, 0.05),
+          pointColor: randomColor(i, 0.8),
+          pointStrokeColor: '#fff',
+          pointHighlightFill: randomColor(i, 1),
+          pointHighlightStroke: '#fff',
+          data: personMap[person]
+            .filter(dateFilter)
+            .map(a => (a ? a[peiToIndex(currentPEI)] : null)),
+        });
       });
-    });
     const chartData = {
       labels: dates.filter(dateFilter),
       datasets,
@@ -204,7 +245,9 @@ class App extends Component {
     const width = window.innerWidth < 1000 ? 600 : 800;
     const height = (width * 3) / 4;
 
-    return <LineChart data={chartData} redraw options={chartOptions} width={width} height={height} />;
+    return (
+      <LineChart data={chartData} redraw options={chartOptions} width={width} height={height} />
+    );
   }
 
   render() {
@@ -214,7 +257,9 @@ class App extends Component {
       <div className="App">
         <div className="header">
           <h1>PEI Visualizer</h1>
-          <p>A <b>P</b>hysical, <b>E</b>motional, and <b>I</b>ntellectual health visualizer.</p>
+          <p>
+            A <b>P</b>hysical, <b>E</b>motional, and <b>I</b>ntellectual health visualizer.
+          </p>
         </div>
         <Grid>
           <Col lg={2} md={3} sm={3} xs={4}>
@@ -277,13 +322,38 @@ class App extends Component {
         <Grid className="faq">
           <h2>FAQ</h2>
           <h3>What is Physical Health?</h3>
-          <p>Physical Health is the ability to maintain a healthy quality of life that allows us to get through our daily activities without undue fatigue or physical stress. The ability to recognize that our behaviors have a significant impact on our wellness and adopting healthful habits while avoiding destructive habits will lead to optimal Physical Health.</p>
+          <p>
+            Physical Health is the ability to maintain a healthy quality of life that allows us to
+            get through our daily activities without undue fatigue or physical stress. The ability
+            to recognize that our behaviors have a significant impact on our wellness and adopting
+            healthful habits while avoiding destructive habits will lead to optimal Physical Health.
+          </p>
           <h3>What is Emotional Health?</h3>
-          <p>Emotional Health is the ability to understand ourselves and cope with the challenges life can bring. The ability to acknowledge and share feelings of anger, fear, sadness, stress, hope, love, joy and happiness in a productive manner contributes to our Emotional Health.</p>
+          <p>
+            Emotional Health is the ability to understand ourselves and cope with the challenges
+            life can bring. The ability to acknowledge and share feelings of anger, fear, sadness,
+            stress, hope, love, joy and happiness in a productive manner contributes to our
+            Emotional Health.
+          </p>
           <h3>What is Intellectual Health?</h3>
-          <p>Intellectual Health is the ability to open our minds to new ideas and experiences that can be applied to personal decisions, group interaction and community betterment. The desire to learn new concepts, improve skills and seek challenges in pursuit of lifelong learning contributes to our Intellectual Health.</p>
+          <p>
+            Intellectual Health is the ability to open our minds to new ideas and experiences that
+            can be applied to personal decisions, group interaction and community betterment. The
+            desire to learn new concepts, improve skills and seek challenges in pursuit of lifelong
+            learning contributes to our Intellectual Health.
+          </p>
           <h3>Where can I learn more?</h3>
-          <p>Read more about the <a target="_blank" rel="noopener noreferrer" href="https://wellness.ucr.edu/seven_dimensions.html">Seven Dimensions of Wellness</a> from the University of California, Riverside.</p>
+          <p>
+            Read more about the{' '}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://wellness.ucr.edu/seven_dimensions.html"
+            >
+              Seven Dimensions of Wellness
+            </a>{' '}
+            from the University of California, Riverside.
+          </p>
         </Grid>
       </div>
     );
