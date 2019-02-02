@@ -276,7 +276,7 @@ class App extends Component {
           </p>
         </div>
         <Grid>
-          <Col lg={2} md={3} sm={3} xs={4}>
+          <Col xl={2} lg={3} md={3} sm={4} xs={4}>
             {link && <ShareLink />}
             <ToggleButtonGroup
               type="radio"
@@ -291,6 +291,7 @@ class App extends Component {
                 </ToggleButton>
               ))}
             </ToggleButtonGroup>
+            <br />
             <DatePicker
               selected={startDate}
               selectsStart
@@ -325,7 +326,7 @@ class App extends Component {
               style={{ height: '600px', width: '160px' }}
             />
           </Col>
-          <Col lg={10} md={9} sm={9} xs={8}>
+          <Col xl={10} lg={9} md={9} sm={8} xs={8}>
             <div
               className="gpt-ad"
               id="div-gpt-ad-1548574061321-0"
