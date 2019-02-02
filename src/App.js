@@ -59,10 +59,11 @@ class App extends Component {
       lines.forEach((line, i) => {
         const elements = line.split(',');
         const date = elements[0];
-        const person = elements[1];
+        let person = elements[1];
         if (elements.length < 5 || !date || !person) {
           return;
         }
+        person = person.trim();
 
         // Update start/end dates
         if (!startDate) {
