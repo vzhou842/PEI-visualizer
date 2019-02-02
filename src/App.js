@@ -101,7 +101,7 @@ class App extends Component {
       this.setState({ dates, personMap, startDate, endDate });
 
       // Request the server for a link
-      POST('/link/new', { csv: reader.result }).then(response => {
+      POST('/link/new', { data: { dates, personMap } }).then(response => {
         const url = response;
         window.history.replaceState(null, null, url);
       }).catch(console.error);
