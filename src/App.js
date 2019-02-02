@@ -60,7 +60,16 @@ class App extends Component {
       this.state.linkDataState = LINK_DATA_LOADING;
       GET(`${pathname}/data`)
         .then(data => {
-          this.setState({ ...JSON.parse(data), link: pathname, linkDataState: LINK_DATA_NONE });
+          const dataObj = JSON.parse(data);
+          const startDate = new Date(dataObj.dates[0]);
+          const endDate = new Date(dataObj.dates[dataObj.dates.length - 1]);
+          this.setState({
+            ...dataObj,
+            startDate,
+            endDate,
+            link: pathname,
+            linkDataState: LINK_DATA_NONE,
+          });
         })
         .catch(err => {
           console.error(err);
