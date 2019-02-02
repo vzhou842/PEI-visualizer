@@ -256,8 +256,8 @@ class App extends Component {
       datasetFill: true,
     };
 
-    const width = window.innerWidth < 1000 ? 600 : 800;
-    const height = (width * 3) / 4;
+    const width = Math.min(1000, Math.max(400, Math.round(window.innerWidth * 0.6)));
+    const height = Math.round((width * 3) / 4);
 
     return (
       <LineChart data={chartData} redraw options={chartOptions} width={width} height={height} />
