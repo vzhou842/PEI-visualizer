@@ -9,8 +9,6 @@ const app = express();
 
 const BUILD_DIR = path.join(__dirname, '../build');
 
-const LINK_EXPIRATION_SECONDS = 60 * 60 * 24 * 14; // 2 weeks
-
 app.use(express.static(BUILD_DIR, { maxAge: '1y' }));
 app.use(express.json());
 
@@ -40,7 +38,7 @@ app.post('/link/new', (req, res, next) => {
   }
   // TODO: enforce max / min data size
   const url = shortid();
-  redis.saveLink(url, data, LINK_EXPIRATION_SECONDS).then(() => {
+  redis.saveLink(url, data).then(() => {
     res.status(200).send(`/link/${url}`);
   }).catch(next);
 });
