@@ -329,11 +329,6 @@ class App extends Component {
                   </Checkbox>
                 ))}
             </Form>
-            <div
-              className="gpt-ad"
-              id="div-gpt-ad-1548576881046-0"
-              style={{ height: '600px', width: '160px' }}
-            />
           </Col>
           <Col xl={10} lg={9} md={9} sm={8} xs={8}>
             <div
