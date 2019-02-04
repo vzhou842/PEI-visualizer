@@ -331,11 +331,11 @@ class App extends Component {
             </Form>
           </Col>
           <Col xl={10} lg={9} md={9} sm={8} xs={8}>
-            <div
+            {/*<div
               className="gpt-ad"
               id="div-gpt-ad-1548574061321-0"
               style={{ height: '90px', width: '728px' }}
-            />
+            />*/}
             {this.renderChart()}
           </Col>
         </Grid>
