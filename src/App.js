@@ -46,13 +46,13 @@ class App extends Component {
     super(props);
 
     // Check for AdBlock
-    if (window.blockAdBlock) {
-      window.blockAdBlock.onDetected(() => {
-        this.setState({ adBlockDetected: true });
-      });
-    } else {
-      this.state.adBlockDetected = true;
-    }
+    // if (window.blockAdBlock) {
+    //   window.blockAdBlock.onDetected(() => {
+    //     this.setState({ adBlockDetected: true });
+    //   });
+    // } else {
+    //   this.state.adBlockDetected = true;
+    // }
 
     // Download link data if needed
     const { pathname } = window.location;
