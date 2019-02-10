@@ -386,6 +386,11 @@ class App extends Component {
             </a>{' '}
             from the University of California, Riverside.
           </p>
+          <h3>Can I contact the creator?</h3>
+          <p>
+            This site was built by <a href='https://victorzhou.com' target='_blank'>Victor Zhou</a>.
+            The best way to get in touch is through <a href='mailto:vzhou842@gmail.com'>email</a>.
+          </p>
         </Grid>
       </div>
     );
