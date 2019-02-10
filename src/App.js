@@ -353,28 +353,7 @@ class App extends Component {
             visit a link that no longer works, you can ask the original author to share the CSV with
             you or reupload it to get a new link.
           </p>
-          <h3>What is Physical Health?</h3>
-          <p>
-            Physical Health is the ability to maintain a healthy quality of life that allows you to
-            get through daily activities without undue fatigue or physical stress. The ability
-            to recognize that your behaviors have a significant impact on wellness and adopting
-            healthful habits while avoiding destructive habits will lead to good Physical Health.
-          </p>
-          <h3>What is Emotional Health?</h3>
-          <p>
-            Emotional Health is the ability to understand yourself and cope with the challenges
-            life can bring. The ability to acknowledge and share feelings of anger, fear, sadness,
-            stress, hope, love, joy and happiness in a productive manner contributes to your
-            Emotional Health.
-          </p>
-          <h3>What is Intellectual Health?</h3>
-          <p>
-            Intellectual Health is the ability to open your mind to new ideas and experiences that
-            can be applied to personal decisions and group interactions. The
-            desire to learn new concepts, improve skills and seek challenges in pursuit of lifelong
-            learning contributes to your Intellectual Health.
-          </p>
-          <h3>Where can I learn more?</h3>
+          <h3>Where can I learn more about Physical, Emotional, and Intellectual Health?</h3>
           <p>
             Read more about the{' '}
             <a
