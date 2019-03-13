@@ -8,6 +8,7 @@ import { GET, POST } from './HTTP';
 import ShareLink from './ShareLink';
 
 import './App.css';
+import './CBA.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const LineChart = require('react-chartjs').Line;
@@ -75,6 +76,17 @@ class App extends Component {
           console.error(err);
           this.setState({ linkDataState: LINK_DATA_ERROR });
         });
+    }
+  }
+
+  componentDidMount() {
+    if (true || window.location.hostname !== 'localhost') {
+      const container = document.getElementById('cba-container');
+      const script = document.createElement('script');
+      script.id = '_carbonads_js';
+      script.async = true;
+      script.src = '//cdn.carbonads.com/carbon.js?serve=CK7I4237&placement=victorzhoucom';
+      container.appendChild(script);
     }
   }
 
@@ -317,6 +329,7 @@ class App extends Component {
               onChange={this.onEndDateChange}
               placeholderText="End Date"
             />
+            <div id="cba-container" />
             <Form>
               {personMap &&
                 Object.keys(personMap).map(person => (
@@ -352,18 +365,6 @@ class App extends Component {
             Unfortunately, yes. After 2 weeks of inactivity, any shareable link will expire. If you
             visit a link that no longer works, you can ask the original author to share the CSV with
             you or reupload it to get a new link.
-          </p>
-          <h3>Where can I learn more about Physical, Emotional, and Intellectual Health?</h3>
-          <p>
-            Read more about the{' '}
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://wellness.ucr.edu/seven_dimensions.html"
-            >
-              Seven Dimensions of Wellness
-            </a>{' '}
-            from the University of California, Riverside.
           </p>
           <h3>Can I contact the creator?</h3>
           <p>
