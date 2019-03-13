@@ -11,7 +11,7 @@ import './App.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const LineChart = require('react-chartjs').Line;
-require('blockadblock');
+// require('blockadblock');
 
 function peiToIndex(pei) {
   return 'PEI'.indexOf(pei);
