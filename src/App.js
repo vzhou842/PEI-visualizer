@@ -366,11 +366,11 @@ class App extends Component {
             visit a link that no longer works, you can ask the original author to share the CSV with
             you or reupload it to get a new link.
           </p>
-          <h3>Can I contact the creator?</h3>
+          {/*<h3>Can I contact the creator?</h3>
           <p>
             This site was built by <a href='https://victorzhou.com' target='_blank'>Victor Zhou</a>.
             The best way to get in touch is through <a href='mailto:vzhou842@gmail.com'>email</a>.
-          </p>
+          </p>*/}
         </Grid>
       </div>
     );
