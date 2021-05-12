@@ -5,7 +5,7 @@
     "blockadblock": "^3.2.1",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
-    "chart.js": "^1.1.1",
+    "chart.js": "^2.9.4",
     "express": "^4.16.4",
     "react": "^16.7.0",
     "react-bootstrap": "^0.32.4",
